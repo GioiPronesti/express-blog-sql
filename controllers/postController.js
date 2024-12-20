@@ -168,7 +168,16 @@ function modify(req, res) {
 }
 
 function destroy(req, res) {
-  const id = parseInt(req.params.id);
+  // recuperiamo id dall' url
+  const { id } = req.params;
+
+  // elimino il post dal blog
+  connection.query("DELETE FROM posts WHERE id = ?", [id], (err) => {
+    if (err) return res.status(500).json({ error: "failed to delete post" });
+    res.sendStatus(204);
+  });
+
+  /* const id = parseInt(req.params.id);
   console.log(`Elimino la pizza con id: ${id}`);
   const postIndex = posts.findIndex((post) => post.id === id);
 
@@ -185,6 +194,7 @@ function destroy(req, res) {
   res.sendStatus(204);
 
   res.send("elimino un post preciso");
+  */
 }
 
 // export of controller function property
