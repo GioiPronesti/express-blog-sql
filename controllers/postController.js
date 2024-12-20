@@ -1,6 +1,7 @@
 const posts = require("../data/posts.js");
 
 const connection = require("../data/db.js");
+const { json } = require("express");
 
 // the logic of crud routs
 
@@ -19,10 +20,23 @@ let lastId = posts.at(-1).id;
 // index /posts/
 
 function index(req, res) {
-  const listPost = posts;
+  /*  const listPost = posts;
 
   res.json(listPost);
   res.send("indico tutta la lista dei posts");
+ */
+
+  const callback = (err, results) => {
+    if (err) {
+      res.status(500).json({ error: "Database query failed" });
+    } else {
+      res.json(results);
+    }
+  };
+
+  const sql = `SELECT * FROM posts`;
+
+  connection.query(sql, callback);
 }
 
 // show /posts/:id
