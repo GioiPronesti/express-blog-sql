@@ -42,7 +42,28 @@ function index(req, res) {
 // show /posts/:id
 
 function show(req, res, next) {
-  const id = parseInt(req.params.id);
+  // recupero id dall' url
+  const { id } = req.params;
+  // mostro il post con id inserito da utente
+  const sql = "SELECT * FROM posts WHERE id = ? ";
+  // con il metodo query recupero l'id inserito e passo una funzione di callback
+  connection.query(sql, [id], (err, results) => {
+    //per verificare se trovo un messaggio di errore (stato 500)dovuto al server
+
+    if (err) return res.status(500).json({ error: "Database query failed" });
+
+    //per verificare se trovo un messaggio di errore (stato 404) dovuto al client
+
+    if (results.length === 0)
+      return res
+        .status(404)
+        .json({ error: "Post not found, try new id again !" });
+
+    // superati i controlli mostro il risultato della risposta alla chiamata
+    res.json(results[0]);
+  });
+
+  /* const id = parseInt(req.params.id);
   console.log(`Ecco il post con id: ${id}`);
 
   console.log(id);
@@ -65,6 +86,7 @@ function show(req, res, next) {
   res.json(result);
 
   //res.send("mostro il post specifico");
+  */
 }
 
 //( il paramentro dinamico id: in questo caso viene recuperato dal server,
